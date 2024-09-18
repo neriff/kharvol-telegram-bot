@@ -51,12 +51,7 @@ public class AddPollCommandHandler extends AbstractCommandHandler {
 
     @Override
     public boolean isApplicable(Update update) {
-        return hasText(update, COMMAND_ADD_POLL);
-    }
-
-    @Override
-    public void preHandle(Update update) {
-
+        return chatTypeIs(update, CHAT_TYPE_PRIVATE) && hasText(update, COMMAND_ADD_POLL);
     }
 
     @Override

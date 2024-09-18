@@ -15,10 +15,11 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.ForwardMessage;
+import org.telegram.telegrambots.meta.api.methods.pinnedmessages.PinChatMessage;
 import org.telegram.telegrambots.meta.api.methods.polls.SendPoll;
 import org.telegram.telegrambots.meta.api.objects.Message;
-import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 @Service
 @Transactional
@@ -64,12 +65,8 @@ public class PollService {
             sendPoll.setIsClosed(false);
             sendPoll.setChatId(adminChatId);
 
-            try {
-                Message executed = kharvollBot.execute(sendPoll);
-                savePollInfo(executed, pollConfig);
-            } catch (TelegramApiException e) {
-                throw new RuntimeException(e);
-            }
+            Message executed = kharvollBot.execute(sendPoll);
+            savePollInfo(executed, pollConfig);
         }
     }
 
@@ -91,12 +88,17 @@ public class PollService {
                 forwardMessage.setFromChatId(adminChatId);
                 forwardMessage.setMessageThreadId(kharvollPollsThreadId);
 
-                try {
-                    kharvollBot.execute(forwardMessage);
-                    pollInfo.setForwarded(true);
-                } catch (TelegramApiException e) {
-                    throw new RuntimeException(e);
-                }
+                Message forwardedMessage = kharvollBot.execute(forwardMessage);
+
+                pollInfo.setForwarded(true);
+
+                PinChatMessage pinMessage = new PinChatMessage();
+                pinMessage.setChatId(kharvollChatId);
+                pinMessage.setMessageId(forwardedMessage.getMessageId());
+                pinMessage.setDisableNotification(false);
+
+                kharvollBot.execute(pinMessage);
+
             }
         }
 

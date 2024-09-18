@@ -10,4 +10,6 @@ public interface UserSessionRepository extends JpaRepository<UserSession, String
 
     Optional<UserSession> findByUserId(Long userId);
 
+    boolean existsByUserId(Long userId);
+
 }

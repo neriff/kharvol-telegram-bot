@@ -22,15 +22,6 @@ public class StartCommandHandler extends AbstractCommandHandler {
 
     @Override
     public List<? extends BotApiMethod<?>> handle(Update update) {
-
-        if (!isAdmin(update)) {
-            SendMessage sendMessage = new SendMessage();
-            sendMessage.setChatId(getChatId(update));
-            sendMessage.setText("You don't have permission to start this bot.");
-
-            return List.of(sendMessage);
-        }
-
         SendMessage sendMessage = new SendMessage();
         sendMessage.setChatId(getChatId(update));
         sendMessage.setText("Вітаю!");
@@ -50,11 +41,13 @@ public class StartCommandHandler extends AbstractCommandHandler {
 
     @Override
     public boolean isApplicable(Update update) {
-        return isCommand(update) && hasText(update, COMMAND_START);
+        return chatTypeIs(update, CHAT_TYPE_PRIVATE) && isCommand(update) && hasText(update, COMMAND_START);
     }
 
     @Override
     public void preHandle(Update update) {
+        super.preHandle(update);
+
         if (!userSessionService.isSessionExists(getChatId(update))) {
             userSessionService.createSession(getChatId(update));
         }
