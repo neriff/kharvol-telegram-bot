@@ -49,10 +49,6 @@ public class ConfigurePollsHandler extends AbstractCommandHandler {
         return hasText(update, COMMAND_CONFIGURE_POLLS);
     }
 
-    @Override
-    public void preHandle(Update update) {
-
-    }
 
     @Override
     public void postHandle(Update update) {

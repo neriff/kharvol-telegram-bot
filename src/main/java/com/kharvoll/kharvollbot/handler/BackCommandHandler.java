@@ -2,12 +2,10 @@ package com.kharvoll.kharvollbot.handler;
 
 import com.kharvoll.kharvollbot.domain.ConversationState;
 import com.kharvoll.kharvollbot.service.UserSessionService;
-import java.util.AbstractMap;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
-import org.glassfish.jersey.internal.util.Producer;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -46,10 +44,6 @@ public class BackCommandHandler extends AbstractCommandHandler {
     }
 
     @Override
-    public void preHandle(Update update) {
-    }
-
-    @Override
     public List<? extends BotApiMethod<?>> handle(Update update) {
 
         ConversationState currentConversationState = userSessionService.getCurrentConversationState(getChatId(update));
@@ -71,7 +65,8 @@ public class BackCommandHandler extends AbstractCommandHandler {
 
     @Override
     public boolean isApplicable(Update update) {
-        return hasText(update, COMMAND_BACK)
+        return chatTypeIs(update, CHAT_TYPE_PRIVATE)
+                && hasText(update, COMMAND_BACK)
                 && userSessionService.getCurrentConversationState(getChatId(update)).getPreviousState() != null;
     }
 }

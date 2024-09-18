@@ -60,7 +60,7 @@ public class GetPollsCommandHandler extends AbstractCommandHandler {
 
     @Override
     public boolean isApplicable(Update update) {
-        return hasText(update, COMMAND_GET_POOLS);
+        return chatTypeIs(update, CHAT_TYPE_PRIVATE) && hasText(update, COMMAND_GET_POOLS);
     }
 
     private String buildText(PollConfig pollConfig) {
@@ -76,15 +76,5 @@ public class GetPollsCommandHandler extends AbstractCommandHandler {
     private String buildCallbackData(PollConfig pollConfig) {
         return DeletePollConfigCommandHandler.CALLBACK_DATA_TEMPLATE
                 .formatted(DeletePollConfigCommandHandler.ACTION_DELETE_POLL_CONFIG, pollConfig.getId());
-    }
-
-    @Override
-    public void preHandle(Update update) {
-
-    }
-
-    @Override
-    public void postHandle(Update update) {
-
     }
 }

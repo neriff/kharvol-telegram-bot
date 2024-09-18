@@ -62,14 +62,10 @@ public class QuestionTemplateEnteredHandler extends AbstractCommandHandler {
 
     @Override
     public boolean isApplicable(Update update) {
-        return !isCommand(update)
+        return chatTypeIs(update, CHAT_TYPE_PRIVATE)
+                && !isCommand(update)
                 && hasText(update)
                 && conversationStateIs(update, ConversationState.WAITING_FOR_QUESTION_TEMPLATE);
-    }
-
-    @Override
-    public void preHandle(Update update) {
-
     }
 
     @Override

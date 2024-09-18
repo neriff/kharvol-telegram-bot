@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.kharvoll.kharvollbot.domain.ConversationState;
 import com.kharvoll.kharvollbot.persistence.model.UserSession;
 import com.kharvoll.kharvollbot.persistence.repository.UserSessionRepository;
+import com.kharvoll.kharvollbot.service.exception.ErrorMessage;
 import jakarta.persistence.EntityNotFoundException;
 import java.util.Optional;
 import org.springframework.context.annotation.Scope;
@@ -32,12 +33,12 @@ public class UserSessionService {
     }
 
     public boolean isSessionExists(Long userId) {
-        return userSessionRepository.findByUserId(userId).isPresent();
+        return userSessionRepository.existsByUserId(userId);
     }
 
     public Optional<JsonNode> getSessionParameter(Long userId, String parameter) {
         UserSession userSession = userSessionRepository.findByUserId(userId)
-                .orElseThrow(() -> new EntityNotFoundException("UserSession for user with id '%s' does not exist".formatted(userId)));
+                .orElseThrow(() -> new EntityNotFoundException(ErrorMessage.USER_SESSION_FOR_USER_WITH_ID_DOES_NOT_EXIST.formatted(userId)));
 
         ObjectNode sessionParameters = userSession.getSessionParameters();
 
@@ -46,7 +47,7 @@ public class UserSessionService {
 
     public void setSessionParameter(Long userId, String parameter, String value) {
         UserSession userSession = userSessionRepository.findByUserId(userId)
-                .orElseThrow(() -> new EntityNotFoundException("UserSession for user with id '%s' does not exist".formatted(userId)));
+                .orElseThrow(() -> new EntityNotFoundException(ErrorMessage.USER_SESSION_FOR_USER_WITH_ID_DOES_NOT_EXIST.formatted(userId)));
 
         ObjectNode sessionParameters = userSession.getSessionParameters();
 

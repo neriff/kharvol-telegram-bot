@@ -51,9 +51,8 @@ public class DeletePollConfigCommandHandler extends AbstractCommandHandler {
 
     @Override
     public boolean isApplicable(Update update) {
-        boolean isApplicable = update.hasCallbackQuery()
+        boolean isApplicable = chatTypeIs(update, CHAT_TYPE_PRIVATE) && update.hasCallbackQuery()
                 && update.getCallbackQuery().getData() != null;
-
 
         if (isApplicable) {
             String data = update.getCallbackQuery().getData();
@@ -70,15 +69,5 @@ public class DeletePollConfigCommandHandler extends AbstractCommandHandler {
         }
 
        return isApplicable;
-    }
-
-    @Override
-    public void preHandle(Update update) {
-
-    }
-
-    @Override
-    public void postHandle(Update update) {
-
     }
 }

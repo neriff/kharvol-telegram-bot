@@ -13,6 +13,7 @@ import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardRemove;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 
@@ -37,25 +38,9 @@ public class DayEnteredHandler extends AbstractCommandHandler {
         if (conversationStateIs(update, ConversationState.WAITING_FOR_CREATION_DAY)) {
             userSessionService.setSessionParameter(getChatId(update), UserSessionService.SESSION_PARAMETER_CREATION_DAY, day);
 
-            KeyboardButton mondayButton = new KeyboardButton(DAY_MONDAY);
-            KeyboardButton tuesdayButton = new KeyboardButton(DAY_TUESDAY);
-            KeyboardButton wednesdayButton = new KeyboardButton(DAY_WEDNESDAY);
-            KeyboardButton thursdayButton = new KeyboardButton(DAY_THURSDAY);
-            KeyboardButton fridayButton = new KeyboardButton(DAY_FRIDAY);
-            KeyboardButton saturdayButton = new KeyboardButton(DAY_SATURDAY);
-            KeyboardButton sundayButton = new KeyboardButton(DAY_SUNDAY);
-
-            KeyboardRow keyboardRow1 = new KeyboardRow(List.of(mondayButton, tuesdayButton));
-            KeyboardRow keyboardRow2 = new KeyboardRow(List.of(wednesdayButton, thursdayButton));
-            KeyboardRow keyboardRow3 = new KeyboardRow(List.of(fridayButton, saturdayButton));
-            KeyboardRow keyboardRow4 = new KeyboardRow(List.of(sundayButton));
-
-            ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup(List.of(keyboardRow1, keyboardRow2, keyboardRow3, keyboardRow4));
-
             SendMessage sendMessage = new SendMessage();
             sendMessage.setChatId(getChatId(update).toString());
-            sendMessage.setText("Виберіть день опитування повинно бути переслано до загоальної групи");
-            sendMessage.setReplyMarkup(replyKeyboardMarkup);;
+            sendMessage.setText("Виберіть день опитування повинно бути переслано до загальної групи");
 
             return List.of(sendMessage);
         } else if (conversationStateIs(update, ConversationState.WAITING_FOR_FORWARDING_DAY)) {
@@ -64,6 +49,7 @@ public class DayEnteredHandler extends AbstractCommandHandler {
             SendMessage sendMessage = new SendMessage();
             sendMessage.setChatId(getChatId(update));
             sendMessage.setText("Введіть назву опитування");
+            sendMessage.setReplyMarkup(new ReplyKeyboardRemove(true));
 
             return List.of(sendMessage);
         }
@@ -73,18 +59,10 @@ public class DayEnteredHandler extends AbstractCommandHandler {
 
     @Override
     public boolean isApplicable(Update update) {
-        boolean enteredDayOfWeek = hasText(update, DAY_MONDAY) || hasText(update, DAY_TUESDAY)
-                || hasText(update, DAY_WEDNESDAY) || hasText(update, DAY_THURSDAY)
-                || hasText(update, DAY_FRIDAY) || hasText(update, DAY_SATURDAY) || hasText(update, DAY_SUNDAY);
-
+        boolean enteredDayOfWeek = hasAnyText(update, DAY_MONDAY, DAY_TUESDAY, DAY_WEDNESDAY, DAY_THURSDAY, DAY_FRIDAY, DAY_SATURDAY, DAY_SUNDAY);
 
         return enteredDayOfWeek &&
                 (conversationStateIs(update, ConversationState.WAITING_FOR_CREATION_DAY) || conversationStateIs(update, ConversationState.WAITING_FOR_FORWARDING_DAY));
-    }
-
-    @Override
-    public void preHandle(Update update) {
-
     }
 
     @Override

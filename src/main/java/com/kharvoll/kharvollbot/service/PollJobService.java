@@ -4,15 +4,15 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ScheduledService {
+public class PollJobService {
 
     private final PollService pollService;
 
 
-    public ScheduledService(PollService pollService) {
+    public PollJobService(PollService pollService) {
         this.pollService = pollService;
     }
-//0 0 20 * * *
+
     @Scheduled(cron = "${kharvoll-bot.poll.cron}")
     public void startCron() {
         pollService.createPolls();
